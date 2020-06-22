@@ -26,7 +26,7 @@ module.exports = {
   },
 
   Mutation: {
-    async createPost(_, { body }, { req }) {
+    async createPost(_, { body }, { req, pubsub }) {
       const user = checkAuth(req);
       const newPost = new Post({
         body,
@@ -35,6 +35,9 @@ module.exports = {
         createdAt: new Date().toISOString(),
       });
       const post = await newPost.save();
+      pubsub.publish("NEW_POST", {
+        newPost: post,
+      });
       return post;
     },
 
@@ -67,6 +70,14 @@ module.exports = {
         await post.save();
         return post;
       } else throw new UserInputError("Posts not found");
+    },
+  },
+
+  Subscription: {
+    newPost: {
+      subscribe: (_, __, { pubsub }) => {
+        pusub.asyncIterator("NEW_POST");
+      },
     },
   },
 };
