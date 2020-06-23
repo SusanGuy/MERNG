@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 import { useForm } from "../utils/hooks";
+import { AuthContext } from "../context/auth";
 const Login = ({ history }) => {
+  const { login } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
 
   const { onChange, onSubmit, values } = useForm(() => loginUser(), {
@@ -14,7 +16,8 @@ const Login = ({ history }) => {
   const { username, password } = values;
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-    update(_, result) {
+    update(_, { data: { login: user } }) {
+      login(user);
       history.push("/");
     },
     onError(err) {
@@ -27,7 +30,7 @@ const Login = ({ history }) => {
 
   return (
     <div className="form-container">
-      <Form onSubmit={onSubmit} noValidate>
+      <Form onSubmit={onSubmit} noValidate className={loading ? "loading" : ""}>
         <h1>Login</h1>
         <Form.Input
           label="Username"

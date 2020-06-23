@@ -7,17 +7,21 @@ import Home from "../src/containers/Home";
 import Login from "../src/containers/Login";
 import Register from "../src/containers/Register";
 import { Container } from "semantic-ui-react";
+import { AuthProvider } from "./context/auth";
+import AuthRoute from "./utils/AuthRoute";
 
 const App = () => {
   return (
-    <Container>
-      <Router>
-        <MenuBar />
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-      </Router>
-    </Container>
+    <AuthProvider>
+      <Container>
+        <Router>
+          <MenuBar />
+          <Route exact path="/" component={Home} />
+          <AuthRoute exact path="/login" component={Login} />
+          <AuthRoute exact path="/register" component={Register} />
+        </Router>
+      </Container>
+    </AuthProvider>
   );
 };
 
