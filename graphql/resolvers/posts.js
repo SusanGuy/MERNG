@@ -28,6 +28,13 @@ module.exports = {
   Mutation: {
     async createPost(_, { body }, { req, pubsub }) {
       const user = checkAuth(req);
+      if (body === "") {
+        throw new UserInputError("Body cannot be empty ", {
+          errors: {
+            body: "Body cannot be empty!",
+          },
+        });
+      }
       const newPost = new Post({
         body,
         user: user.id,
